@@ -1,14 +1,39 @@
 let loadButton = document.getElementById("load");
 timetable_data = null;
 timetable_request = null;
-async function getSchema(id) {
+session_request = undefined;
+session = undefined;
+
+async function getSession() {
+  const session_json = {
+    username: username,
+    password: password,
+  };
+
+  session_request = await fetch("/session", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(session_json),
+  });
+
+  session = await session_request.text();
+  console.log("got session " + session);
+  getSchema();
+}
+
+async function getSchema() {
+  if (session === undefined) {
+    getSession();
+    return;
+  }
   loadButton.disabled = true;
   var schemaWidth = window.innerWidth - 5 > 1280 ? 1280 : window.innerWidth - 5;
   currentSchemaWidth = schemaWidth;
 
   const timetable_json = {
-    username: username,
-    password: password,
+    session: session,
     width: schemaWidth,
   };
 
@@ -21,9 +46,7 @@ async function getSchema(id) {
   });
 
   timetable_data = await timetable_request.json();
-  console.log(timetable_data);
   b.clearTimetable(document.getElementById("timetableElement"));
-  console.log("Timetable:", timetable_data);
   localStorage.setItem(
     "cached",
     encodeURIComponent(JSON.stringify(timetable_data))
@@ -53,11 +76,6 @@ function submit() {
   getSchema(username);
 }
 function clearData() {
-  const cookies = document.cookie.split("; ");
-  for (const cookie of cookies) {
-    const [name, _] = cookie.split("=");
-    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-  }
   localStorage.clear();
 
   var te = document.getElementById("timetableElement");
@@ -92,7 +110,6 @@ function getCurrentDay() {
 }
 
 function extractLunchOfDay(day, data) {
-  console.log(day);
   if (day == "Måndag") {
     day = "ndag";
   }
