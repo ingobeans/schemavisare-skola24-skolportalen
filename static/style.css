@@ -1,0 +1,41 @@
+.input-container {
+  display: flex;
+  align-items: center;
+}
+.username-field {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px 0 0 4px;
+  margin-bottom: 50px;
+}
+.password-field {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 0;
+  margin-bottom: 50px;
+}
+.button-container {
+  display: flex;
+  flex-direction: column;
+}
+.button {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.button:disabled {
+  background-color: #6c757d;
+  color: #ddd;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+.button:last-child {
+  border-radius: 0 4px 4px 0;
+  margin-left: 4px;
+  background-color: #484848;
+}
