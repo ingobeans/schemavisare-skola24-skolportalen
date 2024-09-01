@@ -1,5 +1,6 @@
 from flask import Flask,render_template,request
-import clam, datetime, uuid
+from . import clam
+import datetime, uuid
 
 app = Flask(__name__)
 
@@ -22,6 +23,11 @@ def session():
 def timetable():
     data = request.json
     session = sessions[data["session"]]
-    return session.get_timetable(datetime.date.today().isocalendar()[1], int(data["width"]), 650, 0)
+    today = datetime.date.today()
+    week = today.isocalendar()[1]
+    if today.weekday() in [5, 6]:
+        week += 1
+    return session.get_timetable(week, int(data["width"]), 650, 0)
 
-app.run(debug=True,port=6969)
+if __name__ == '__main__':
+    app.run(debug=True)

@@ -1,7 +1,6 @@
-from request_data import *
+from .request_data import *
 from requests_ntlm import HttpNtlmAuth
 from urllib.parse import unquote
-import datetime
 
 def parse_cookies(cookie_header: str) -> dict:
     cookies = {}
@@ -39,7 +38,7 @@ class Skola24Session():
         saml_data1 = skola_saml1.text.split("lue=\"",1)[1].split("\"",1)[0]
         print("got skola24 saml data")
         skola_saml2 = second_skola24_saml(skolportal_session.hag_cookies, saml_data1)
-        print(skola_saml2.text)
+        #print(skola_saml2.text)
         saml_data2 = skola_saml2.text.split("lue=\"",1)[1].split("\"",1)[0]
         print("got new skola24 saml data")
         skola_saml3 = third_skola24_saml(saml_data2)

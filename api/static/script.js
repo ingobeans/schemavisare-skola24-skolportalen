@@ -24,11 +24,11 @@ async function getSession() {
 }
 
 async function getSchema() {
+  loadButton.disabled = true;
   if (session === undefined) {
     getSession();
     return;
   }
-  loadButton.disabled = true;
   var schemaWidth = window.innerWidth - 5 > 1280 ? 1280 : window.innerWidth - 5;
   currentSchemaWidth = schemaWidth;
 
@@ -79,6 +79,7 @@ function clearData() {
   localStorage.clear();
 
   var te = document.getElementById("timetableElement");
+  session = undefined;
   te.style.height = "0px";
   b.clearTimetable(te);
   document.getElementById("username").value = "";
