@@ -24,7 +24,6 @@ var FontFamily = /** @class */ function () {
   };
   return FontFamily;
 };
-var colorCache = {};
 var PdfRenderer = /** @class */ (function () {
   function PdfRenderer(fontFamily, vertical, fileName) {
     this.fileName = "";
@@ -98,6 +97,7 @@ var PdfRenderer = /** @class */ (function () {
     timetableElement.id = "timetableElement";
     var lowest = 0;
     var first = true;
+    var colorCache = {};
     var _loop_1 = function (box, i) {
       if (first == true) {
         first = false;

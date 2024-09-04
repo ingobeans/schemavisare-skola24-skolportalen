@@ -70,10 +70,7 @@ let themes = {
   },
 };
 
-lastDark = false;
-
 function switchTheme(themeName) {
-  console.log(themeName);
   const themeData = themes[themeName];
   if (!themeData) {
     console.log("no such theme as ", themeName);
@@ -83,11 +80,8 @@ function switchTheme(themeName) {
   theme = themeName;
   for (const variable in themeData) {
     if (variable == "dark") {
-      if (themeData[variable] != lastDark) {
-        lastDark = themeData[variable];
-        invertAllColors();
-        continue;
-      }
+      loadTimetable(cached);
+      continue;
     }
     if (themeData.hasOwnProperty(variable)) {
       document.documentElement.style.setProperty(variable, themeData[variable]);
@@ -124,7 +118,6 @@ async function getSchema() {
   });
 
   timetable_data = await timetable_request.json();
-  b.clearTimetable(document.getElementById("timetableElement"));
   localStorage.setItem(
     "cached",
     encodeURIComponent(JSON.stringify(timetable_data))
@@ -134,12 +127,17 @@ async function getSchema() {
 }
 
 function loadTimetable(di) {
+  b.clearTimetable(document.getElementById("timetableElement"));
+  cached = di;
   b.renderTimetable(
     di["data"]["boxList"],
     di["data"]["lineList"],
     di["data"]["textList"],
     document.getElementById("timetableElement")
   );
+  if (themes[theme]["dark"] == true) {
+    invertAllColors();
+  }
 }
 
 function submit() {
@@ -265,19 +263,20 @@ window.addEventListener("resize", function (event) {
 getLunch();
 var username = localStorage.getItem("username");
 var password = localStorage.getItem("password");
-var cached = localStorage.getItem("cached");
+var cached = JSON.parse(decodeURIComponent(localStorage.getItem("cached")));
 var theme = localStorage.getItem("theme");
 
-if (theme == null) {
-  theme = "light";
-}
-switchTheme(theme);
 console.log("Laddar användare: " + username);
 if (username != null) {
   if (cached != null) {
-    loadTimetable(JSON.parse(decodeURIComponent(cached)));
+    loadTimetable(cached);
   }
   document.getElementById("username").value = username;
   document.getElementById("password").value = password;
   //getSchema(username);
 }
+
+if (theme == null) {
+  theme = "light";
+}
+switchTheme(theme);
