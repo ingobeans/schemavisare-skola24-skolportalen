@@ -24,7 +24,7 @@ var FontFamily = /** @class */ function () {
   };
   return FontFamily;
 };
-
+var colorCache = {};
 var PdfRenderer = /** @class */ (function () {
   function PdfRenderer(fontFamily, vertical, fileName) {
     this.fileName = "";
@@ -98,7 +98,7 @@ var PdfRenderer = /** @class */ (function () {
     timetableElement.id = "timetableElement";
     var lowest = 0;
     var first = true;
-    var _loop_1 = function (box) {
+    var _loop_1 = function (box, i) {
       if (first == true) {
         first = false;
         return;
@@ -109,17 +109,18 @@ var PdfRenderer = /** @class */ (function () {
       rect.setAttribute("width", box.width.toString());
       rect.setAttribute("height", box.height.toString());
       rect.setAttribute("shape-rendering", "crispEdges");
-      color_replacing = JSON.parse(localStorage.getItem("colors"));
-      if (
-        color_replacing != null &&
-        color_replacing != {} &&
-        box.bColor in color_replacing
-      ) {
-        box.bColor = color_replacing[box.bColor];
+      let cssVarName = Object.keys(colorCache).find(
+        (name) => colorCache[name] === box.bColor
+      );
+
+      if (!cssVarName) {
+        cssVarName = `--color-box-${i.toString()}`;
+        document.documentElement.style.setProperty(cssVarName, box.bColor);
+        colorCache[cssVarName] = box.bColor;
       }
 
-      rect.style.fill = box.bColor;
-      rect.style.stroke = box.fColor;
+      rect.style.fill = `var(${cssVarName})`;
+      rect.style.stroke = "var(--color-border)";
       rect.style.strokeWidth = "1";
       if (box.type === "Lesson" && this_1.isLessonClickable) {
         rect.setAttribute("focusable", "true");
@@ -146,7 +147,7 @@ var PdfRenderer = /** @class */ (function () {
     var this_1 = this;
     for (var _i = 0, _a = this.boxList; _i < _a.length; _i++) {
       var box = _a[_i];
-      _loop_1(box);
+      _loop_1(box, _i);
     }
     timetableElement.style.height = lowest + "px";
     svg.setAttribute("height", lowest.toString());
@@ -175,7 +176,7 @@ var PdfRenderer = /** @class */ (function () {
       label.textContent = text.text;
       label.style.fontSize = text.fontsize + "px";
       label.style.fontFamily = "Lato, sans-serif";
-      label.style.fill = text.fColor;
+      label.style.fill = "var(--color-text)";
       label.setAttribute("x", (text.x + 1).toString());
       label.setAttribute("y", (text.y + 1 + text.fontsize).toString());
       label.setAttributeNS("text-information", "text-id", text.id.toString());

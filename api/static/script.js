@@ -2,6 +2,108 @@ let loadButton = document.getElementById("load");
 timetable_data = null;
 timetable_request = null;
 
+function invertColors(hex) {
+  function hexToRgb(hex) {
+    if (hex[0] === "#") hex = hex.slice(1);
+    let bigint = parseInt(hex, 16);
+    return {
+      r: (bigint >> 16) & 255,
+      g: (bigint >> 8) & 255,
+      b: bigint & 255,
+    };
+  }
+
+  function rgbToHex(r, g, b) {
+    return `#${((1 << 24) + (r << 16) + (g << 8) + b)
+      .toString(16)
+      .slice(1)
+      .toUpperCase()}`;
+  }
+
+  function calculateBrightness(r, g, b) {
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  }
+
+  const { r, g, b } = hexToRgb(hex);
+
+  const originalBrightness = calculateBrightness(r, g, b);
+
+  const invertedBrightness = 255 - originalBrightness;
+  if (originalBrightness != 0) {
+    const factor = invertedBrightness / originalBrightness;
+    const newR = Math.min(255, Math.round(r * factor));
+    const newG = Math.min(255, Math.round(g * factor));
+    const newB = Math.min(255, Math.round(b * factor));
+    return rgbToHex(newR, newG, newB);
+  }
+  return "#ffffff";
+}
+
+function invertAllColors() {
+  const root = document.documentElement;
+  const styles = getComputedStyle(root);
+  const variables = Array.from(styles).filter((name) =>
+    name.startsWith("--color-box-")
+  );
+
+  variables.forEach((variable) => {
+    const color = styles.getPropertyValue(variable).trim();
+    const invertedColor = invertColors(color);
+    root.style.setProperty(variable, invertedColor);
+  });
+}
+
+let themes = {
+  light: {
+    dark: false,
+    "--color-border": "rgb(0, 0, 0)",
+    "--color-background": "rgb(255, 255, 255)",
+    "--color-tab": "#ccc",
+    "--color-text": "#000",
+  },
+  dark: {
+    dark: true,
+    "--color-border": "rgb(0, 0, 0)",
+    "--color-background": "#1d1f20",
+    "--color-tab": "#393d3e",
+    "--color-text": "#fff",
+  },
+};
+
+lastDark = false;
+
+function switchTheme(themeName) {
+  console.log(themeName);
+  const themeData = themes[themeName];
+  if (!themeData) {
+    console.log("no such theme as ", themeName);
+    return;
+  }
+  localStorage.setItem("theme", themeName);
+  theme = themeName;
+  for (const variable in themeData) {
+    if (variable == "dark") {
+      if (themeData[variable] != lastDark) {
+        lastDark = themeData[variable];
+        invertAllColors();
+        continue;
+      }
+    }
+    if (themeData.hasOwnProperty(variable)) {
+      document.documentElement.style.setProperty(variable, themeData[variable]);
+    }
+  }
+}
+
+function changeTheme() {
+  console.log(theme);
+  if (theme == "light") {
+    switchTheme("dark");
+  } else {
+    switchTheme("light");
+  }
+}
+
 async function getSchema() {
   loadButton.disabled = true;
   var schemaWidth = window.innerWidth - 5 > 1280 ? 1280 : window.innerWidth - 5;
@@ -164,10 +266,16 @@ getLunch();
 var username = localStorage.getItem("username");
 var password = localStorage.getItem("password");
 var cached = localStorage.getItem("cached");
+var theme = localStorage.getItem("theme");
 console.log("Laddar användare: " + username);
 if (username != null) {
   if (cached != null) {
     loadTimetable(JSON.parse(decodeURIComponent(cached)));
+  }
+  if (theme != null) {
+    switchTheme(theme);
+  } else {
+    switchTheme("light");
   }
   document.getElementById("username").value = username;
   document.getElementById("password").value = password;
