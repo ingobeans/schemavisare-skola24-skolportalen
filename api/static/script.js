@@ -80,7 +80,9 @@ function switchTheme(themeName) {
   theme = themeName;
   for (const variable in themeData) {
     if (variable == "dark") {
-      loadTimetable(cached);
+      if (cached != null) {
+        loadTimetable(cached);
+      }
       continue;
     }
     if (themeData.hasOwnProperty(variable)) {
@@ -129,6 +131,10 @@ async function getSchema() {
 function loadTimetable(di) {
   b.clearTimetable(document.getElementById("timetableElement"));
   cached = di;
+
+  if (di == null) {
+    return;
+  }
   b.renderTimetable(
     di["data"]["boxList"],
     di["data"]["lineList"],
