@@ -267,15 +267,15 @@ var username = localStorage.getItem("username");
 var password = localStorage.getItem("password");
 var cached = localStorage.getItem("cached");
 var theme = localStorage.getItem("theme");
+
+if (theme == null) {
+  theme = "light";
+}
+switchTheme(theme);
 console.log("Laddar användare: " + username);
 if (username != null) {
   if (cached != null) {
     loadTimetable(JSON.parse(decodeURIComponent(cached)));
-  }
-  if (theme != null) {
-    switchTheme(theme);
-  } else {
-    switchTheme("light");
   }
   document.getElementById("username").value = username;
   document.getElementById("password").value = password;
