@@ -1,39 +1,15 @@
 let loadButton = document.getElementById("load");
 timetable_data = null;
 timetable_request = null;
-session_request = undefined;
-session = undefined;
-
-async function getSession() {
-  const session_json = {
-    username: username,
-    password: password,
-  };
-
-  session_request = await fetch("/session", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(session_json),
-  });
-
-  session = await session_request.text();
-  console.log("got session " + session);
-  getSchema();
-}
 
 async function getSchema() {
   loadButton.disabled = true;
-  if (session === undefined) {
-    getSession();
-    return;
-  }
   var schemaWidth = window.innerWidth - 5 > 1280 ? 1280 : window.innerWidth - 5;
   currentSchemaWidth = schemaWidth;
 
   const timetable_json = {
-    session: session,
+    username: username,
+    password: password,
     width: schemaWidth,
   };
 
@@ -79,7 +55,6 @@ function clearData() {
   localStorage.clear();
 
   var te = document.getElementById("timetableElement");
-  session = undefined;
   te.style.height = "0px";
   b.clearTimetable(te);
   document.getElementById("username").value = "";

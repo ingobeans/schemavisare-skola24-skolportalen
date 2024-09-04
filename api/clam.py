@@ -23,8 +23,15 @@ class SkolportalSession():
         portal2 = second_skolportal(self.hag_cookies)
         portal3 = third_skolportal(self.hag_cookies, session)
         print("authenticated skolportalen")
-        portal_home = home_skolportal(self.hag_cookies)
-        portal_me = me_skolportal(self.hag_cookies)
+        #portal_home = home_skolportal(self.hag_cookies)
+    def get_user_info(self) -> json:
+        return me_skolportal(self.hag_cookies).json()
+    def get_user_attributes(self) -> dict:
+        return self.get_user_info()["attributes"]
+    def set_user_attributes(self, attributes:dict) -> None:
+        request = set_me_attributes_skolportal(self.hag_cookies, attributes)
+        if request.status_code != 204:
+            raise ValueError(f"Attributes not allowed, status code {request.status_code}\n\n{request.text}")
 
 class Skola24Session():
     def __init__(self, skolportal_session:SkolportalSession) -> None:
@@ -33,12 +40,11 @@ class Skola24Session():
         print("got skola24 session")
         skola2 = second_skola24(self.skola_cookies)
         skola3 = third_skola24(self.skola_cookies)
-        skola_login = skola24_login(self.skola_cookies)
+        #skola_login = skola24_login(self.skola_cookies)
         skola_saml1 = first_skola24_saml()
         saml_data1 = skola_saml1.text.split("lue=\"",1)[1].split("\"",1)[0]
         print("got skola24 saml data")
         skola_saml2 = second_skola24_saml(skolportal_session.hag_cookies, saml_data1)
-        #print(skola_saml2.text)
         saml_data2 = skola_saml2.text.split("lue=\"",1)[1].split("\"",1)[0]
         print("got new skola24 saml data")
         skola_saml3 = third_skola24_saml(saml_data2)
@@ -46,8 +52,9 @@ class Skola24Session():
         sign_in_url = unquote(skola_saml3.headers["Location"])
         skola_signin = skola24_signin(sign_in_url.split("?t=",1)[1], self.skola_cookies)
         print("signed in to skola24")
-
-    def get_timetable(self, week_number, width, height, day):
+    def get_info(self):
+        return skola24_info(self.skola_cookies).json()
+    def get_timetable(self, week_number, width, height, day, year)->dict:
         years = timetable_years(self.skola_cookies)
         timetables = timetable_timetables(self.skola_cookies)
         key = timetable_key(self.skola_cookies)
