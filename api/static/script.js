@@ -117,9 +117,7 @@ function extractLunchOfDay(day, data) {
   var d = data.split(day)[1];
   d = d.split("Dagens r\\u0026#228;tt \\u003c/span\\u003e")[1];
   d = d.split("\\u003c/li\\u003e")[0];
-  d = d.replace("\\u0026#229;", "å");
-  d = d.replace("\\u0026#246;", "ö");
-  d = d.replace("\\u0026#228;", "ä");
+  d = d.replace(/\\u0026/g, "&");
   return d;
 }
 
@@ -165,7 +163,7 @@ function getLunch() {
     })
     .then((data) => {
       var lunch = extractLunchOfDay(day, data);
-      document.getElementById("lunchtext").innerText = lunch;
+      document.getElementById("lunchtext").innerHTML = lunch;
     })
     .catch((error) => {
       console.error("Error:", error);
