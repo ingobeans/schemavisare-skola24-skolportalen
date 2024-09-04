@@ -41,7 +41,7 @@ function invertColors(hex) {
 
 function invertAllColors() {
   const root = document.documentElement;
-  const styles = getComputedStyle(root);
+  const styles = root.style;
   const variables = Array.from(styles).filter((name) =>
     name.startsWith("--color-box-")
   );
