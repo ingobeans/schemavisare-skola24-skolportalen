@@ -56,17 +56,17 @@ function invertAllColors() {
 let themes = {
   light: {
     dark: false,
-    "--color-border": "rgb(0, 0, 0)",
     "--color-background": "rgb(255, 255, 255)",
     "--color-tab": "#ccc",
     "--color-text": "#000",
+    "--color-line": "#000",
   },
   dark: {
     dark: true,
-    "--color-border": "rgb(0, 0, 0)",
     "--color-background": "#1d1f20",
-    "--color-tab": "#393d3e",
+    "--color-tab": "#333",
     "--color-text": "#fff",
+    "--color-line": "#000",
   },
 };
 

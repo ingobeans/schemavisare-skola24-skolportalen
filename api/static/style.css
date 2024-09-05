@@ -3,6 +3,7 @@ html {
   --color-background: rgb(255, 255, 255);
   --color-tab: #ccc;
   --color-text: #000;
+  --color-line: #000;
   --font: Lato, sans-serif;
 }
 body {

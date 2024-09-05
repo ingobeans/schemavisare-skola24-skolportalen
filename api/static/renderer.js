@@ -120,7 +120,7 @@ var PdfRenderer = /** @class */ (function () {
       }
 
       rect.style.fill = `var(${cssVarName})`;
-      rect.style.stroke = "var(--color-border)";
+      rect.style.stroke = "var(--color-line)";
       rect.style.strokeWidth = "1";
       if (box.type === "Lesson" && this_1.isLessonClickable) {
         rect.setAttribute("focusable", "true");
@@ -161,7 +161,7 @@ var PdfRenderer = /** @class */ (function () {
       l.setAttribute("y1", (line.p1y + 1).toString());
       l.setAttribute("x2", (line.p2x + 1).toString());
       l.setAttribute("y2", (line.p2y + 1).toString());
-      l.setAttribute("stroke", line.color);
+      l.setAttribute("stroke", "var(--color-line)");
       svg.appendChild(l);
     }
   };
