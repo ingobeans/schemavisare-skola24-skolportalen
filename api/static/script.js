@@ -167,14 +167,6 @@ function clearData() {
   document.getElementById("password").value = "";
 }
 
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) {
-    return parts.pop().split(";").shift();
-  }
-}
-
 function getCurrentDay() {
   const days = [
     "Söndag",
@@ -187,31 +179,31 @@ function getCurrentDay() {
   ];
   const currentDate = new Date();
   const dayOfWeek = currentDate.getDay();
-
   return days[dayOfWeek];
 }
 
 function extractLunchOfDay(day, data) {
-  if (day == "Måndag") {
-    day = "ndag";
+  data = data.replace(/\\u0026/g, "&");
+  data = data.replace(/&#(\d+);/g, (match, dec) => {
+    return String.fromCharCode(dec);
+  });
+  data = data.split(day)[1].split("</ul>")[0];
+  console.log(data);
+  let text = "";
+  let main = data.split("Dagens rätt </span>")[1];
+  main = main.split("</li>")[0];
+  text += main;
+  if (data.includes("gröna")) {
+    let veg = data.split("Dagens gröna </span>")[1];
+    veg = veg.split("</li>")[0];
+    text += "\n" + veg;
   }
-  var d = data.split(day)[1];
-  d = d.split("Dagens r\\u0026#228;tt \\u003c/span\\u003e")[1];
-  d = d.split("\\u003c/li\\u003e")[0];
-  d = d.replace(/\\u0026/g, "&");
-  return d;
-}
-
-function getLastMondayFormatted() {
-  const today = new Date();
-  const dayOfWeek = today.getDay();
-  const daysUntilLastMonday = (dayOfWeek + 6) % 7;
-  today.setDate(today.getDate() - daysUntilLastMonday);
-
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+  if (data.includes("extra")) {
+    let extra = data.split("Dagens extra </span>")[1];
+    extra = extra.split("</li>")[0];
+    text += "\n" + extra;
+  }
+  return text;
 }
 
 function getLunch() {
@@ -220,21 +212,13 @@ function getLunch() {
     document.getElementById("lunchtext").innerText = "Det är helg";
     return;
   }
-  const lastMondayFormatted = getLastMondayFormatted();
-  const url =
+  let url =
     "https://corsproxy.io/?" +
     encodeURIComponent(
-      "https://maltidsservice.uppsala.se/OpenMealBlock/GetMeals/?startdate=" +
-        lastMondayFormatted +
-        " 16:00:00&menuType=OpenMealDistributorIdSchool&distributorId=ac50752d-16f3-4ffd-8037-3c3ec42c301f"
+      "https://maltidsservice.uppsala.se/mat-och-menyer/gymnasieskolans-meny/"
     );
-  const headers = {
-    Cookie:
-      "ASP.NET_SessionId=we2k4k04pmmvwnlancy3cqf4; _pk_ref.44.e1d3=%5B%22%22%2C%22%22%2C1694011041%2C%22https%3A%2F%2Fwww.google.com%2F%22%5D; _pk_id.44.e1d3=976e2c22aab2e167.1694011041.; _pk_ses.44.e1d3=1; AcceptCookies_maltidsservice.uppsala.se=True",
-  };
   fetch(url, {
     method: "GET",
-    headers: headers,
   })
     .then((response) => {
       if (!response.ok) {
@@ -244,27 +228,16 @@ function getLunch() {
     })
     .then((data) => {
       var lunch = extractLunchOfDay(day, data);
-      document.getElementById("lunchtext").innerHTML = lunch;
+      document.getElementById("lunchtext").innerText = lunch;
     })
     .catch((error) => {
-      console.error("Error:", error);
+      document.getElementById("lunchtext").innerText =
+        "Kunde inte hämta matsedel\nError: " + error.toString();
     });
 }
 
 var b = new PdfRenderer("Arial", false, "gonk");
 var currentSchemaWidth = null;
-
-window.addEventListener("resize", function (event) {
-  if (username == null) {
-    return;
-  }
-  if (currentSchemaWidth != null) {
-    if (currentSchemaWidth >= 1280 && window.innerWidth >= 1280) {
-      return;
-    }
-  }
-  //getSchema(username);
-});
 
 getLunch();
 var username = localStorage.getItem("username");
@@ -279,7 +252,6 @@ if (username != null) {
   }
   document.getElementById("username").value = username;
   document.getElementById("password").value = password;
-  //getSchema(username);
 }
 
 if (theme == null) {
