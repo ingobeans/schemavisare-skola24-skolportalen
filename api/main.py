@@ -1,6 +1,6 @@
 from flask import Flask,render_template,request
 from . import clam
-import datetime, pytz
+import datetime, pytz, requests, re
 
 app = Flask(__name__)
 
@@ -54,6 +54,47 @@ def get_session(username, password):
     
     print(f"returning {username} session")
     return session.skola24_session
+
+
+def get_current_day():
+    days = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag", "Söndag"]
+    current_date = datetime.datetime.now()
+    day_of_week = current_date.weekday()
+    return days[day_of_week]
+
+def extract_lunch_of_day(day, data):
+    data = data.replace("\\u0026", "&")
+    data = re.sub(r"&#(\d+);", lambda match: chr(int(match.group(1))), data)
+    data = data.split(day)[1].split("</ul>")[0]
+
+    text = ""
+    main = data.split("Dagens rätt </span>")[1].split("</li>")[0]
+    text += main
+
+    if "gröna" in data:
+        veg = data.split("Dagens gröna </span>")[1].split("</li>")[0]
+        text += "\n" + veg
+
+    if "extra" in data:
+        extra = data.split("Dagens extra </span>")[1].split("</li>")[0]
+        text += "\n" + extra
+
+    return text
+
+@app.route("/lunch")
+def get_lunch():
+    day = get_current_day()
+    if day in ["Lördag", "Söndag"]:
+        return "Det är helg"
+    url = "https://maltidsservice.uppsala.se/mat-och-menyer/gymnasieskolans-meny/"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.text
+        lunch = extract_lunch_of_day(day, data)
+        return lunch
+    except Exception as error:
+        return "Servern kunde inte hämta matsedel\nError:" + str(error)
 
 @app.route("/timetable", methods=["POST"])
 def timetable():

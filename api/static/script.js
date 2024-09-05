@@ -167,57 +167,8 @@ function clearData() {
   document.getElementById("password").value = "";
 }
 
-function getCurrentDay() {
-  const days = [
-    "Söndag",
-    "Måndag",
-    "Tisdag",
-    "Onsdag",
-    "Torsdag",
-    "Fredag",
-    "Lördag",
-  ];
-  const currentDate = new Date();
-  const dayOfWeek = currentDate.getDay();
-  return days[dayOfWeek];
-}
-
-function extractLunchOfDay(day, data) {
-  data = data.replace(/\\u0026/g, "&");
-  data = data.replace(/&#(\d+);/g, (match, dec) => {
-    return String.fromCharCode(dec);
-  });
-  data = data.split(day)[1].split("</ul>")[0];
-  console.log(data);
-  let text = "";
-  let main = data.split("Dagens rätt </span>")[1];
-  main = main.split("</li>")[0];
-  text += main;
-  if (data.includes("gröna")) {
-    let veg = data.split("Dagens gröna </span>")[1];
-    veg = veg.split("</li>")[0];
-    text += "\n" + veg;
-  }
-  if (data.includes("extra")) {
-    let extra = data.split("Dagens extra </span>")[1];
-    extra = extra.split("</li>")[0];
-    text += "\n" + extra;
-  }
-  return text;
-}
-
 function getLunch() {
-  var day = getCurrentDay();
-  if (day == "Lördag" || day == "Söndag") {
-    document.getElementById("lunchtext").innerText = "Det är helg";
-    return;
-  }
-  let url =
-    "https://corsproxy.io/?" +
-    encodeURIComponent(
-      "https://maltidsservice.uppsala.se/mat-och-menyer/gymnasieskolans-meny/"
-    );
-  fetch(url, {
+  fetch("/lunch", {
     method: "GET",
   })
     .then((response) => {
@@ -227,8 +178,7 @@ function getLunch() {
       return response.text();
     })
     .then((data) => {
-      var lunch = extractLunchOfDay(day, data);
-      document.getElementById("lunchtext").innerText = lunch;
+      document.getElementById("lunchtext").innerText = data;
     })
     .catch((error) => {
       document.getElementById("lunchtext").innerText =
