@@ -15,48 +15,35 @@
   </head>
 
   <body style="margin: 5px">
-    <div
-      id="main-container"
-      style="
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      "
-    >
-      <div style="max-width: 1280px; width: 100%" id="timetableElement">
-        <div style="margin-bottom: 50px; padding-top: 559px">
-          <div
-            style="
-              background-color: var(--color-tab);
-              padding: 3px;
-              border-radius: 4px;
-              text-align: center;
-            "
-          >
-            <p id="lunchtext" style="font-family: Lato, sans-serif">
-              Laddar matsedel...
-            </p>
+    <div class="main-container">
+      <div class="timetable-container" id="timetableElement">
+        <div class="info-container">
+          <div class="matsedel-container">
+            <p id="lunchtext">Laddar matsedel...</p>
           </div>
-          <input
-            type="text"
-            id="username"
-            class="username-field"
-            placeholder="Användarnamn"
-          />
-          <input
-            type="password"
-            id="password"
-            class="password-field"
-            placeholder="Lösenord"
-          />
-          <button onclick="javascript:submit()" class="button" id="load">
-            Load</button
-          ><button onclick="javascript:clearData()" class="button dark">
-            Clear Data</button
-          ><button onclick="javascript:changeTheme()" class="button dark">
-            Toggle Dark
-          </button>
+          <div class="user-container">
+            <input
+              type="text"
+              id="username"
+              class="username-field"
+              placeholder="Användarnamn"
+            />
+            <input
+              type="password"
+              id="password"
+              class="password-field"
+              placeholder="Lösenord"
+            />
+            <div class="button-group">
+              <button onclick="javascript:submit()" class="button" id="load">
+                Load</button
+              ><button onclick="javascript:clearData()" class="button dark">
+                Clear Data</button
+              ><button onclick="javascript:changeTheme()" class="button dark">
+                Toggle Dark
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

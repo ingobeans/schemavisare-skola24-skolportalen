@@ -175,7 +175,7 @@ var PdfRenderer = /** @class */ (function () {
       );
       label.textContent = text.text;
       label.style.fontSize = text.fontsize + "px";
-      label.style.fontFamily = "Lato, sans-serif";
+      label.style.fontFamily = "var(--font)";
       label.style.fill = "var(--color-text)";
       label.setAttribute("x", (text.x + 1).toString());
       label.setAttribute("y", (text.y + 1 + text.fontsize).toString());
