@@ -29,19 +29,19 @@ def get_session(username, password):
     session_id = generate_session_id(username, password)
     session: Session = sessions.get(session_id)
     print(f"looking for a {username} session")
-    
+
     if not session:
         print(f"no {username} session exists, creating one")
         session = Session(username, password)
         sessions[session_id] = session
     else:
         session_expires_datetime = datetime.datetime.fromisoformat(session.expires)
-        
+
         if session_expires_datetime.tzinfo is None:
             session_expires_datetime = session_expires_datetime.replace(tzinfo=datetime.timezone.utc)
-        
+
         current_time = datetime.datetime.now(session_expires_datetime.tzinfo)
-        
+
         if current_time > session_expires_datetime:
             print(f"session {username} is too old, creating new one")
             session = Session(username, password)
@@ -51,7 +51,7 @@ def get_session(username, password):
             time_remaining = session_expires_datetime - current_time
             minutes_remaining = time_remaining.total_seconds() / 60
             print(f"Time remaining until expiration: {minutes_remaining:.2f} minutes")
-    
+
     print(f"returning {username} session")
     return session.skola24_session
 
@@ -91,6 +91,8 @@ def get_lunch():
         response = requests.get(url)
         response.raise_for_status()
         data = response.text
+        print(f"day={day}")
+        print(f"data={data}")
         lunch = extract_lunch_of_day(day, data)
         return lunch
     except Exception as error:
