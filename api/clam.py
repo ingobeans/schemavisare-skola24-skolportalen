@@ -22,6 +22,8 @@ class SkolportalSession():
         print("got skolportalen session")
         portal2 = second_skolportal(self.hag_cookies)
         portal3 = third_skolportal(self.hag_cookies, session)
+        if portal3.status_code == 401:
+            raise ValueError("Invalid credentials")
         print("authenticated skolportalen")
         #portal_home = home_skolportal(self.hag_cookies)
     def get_user_info(self) -> json:

@@ -120,6 +120,16 @@ async function getSchema() {
   });
 
   timetable_data = await timetable_request.json();
+  console.log(timetable_data["error"])
+  if (timetable_data["error"] !== null){
+    localStorage.setItem(
+      "cached",null
+    );
+    b.clearTimetable(document.getElementById("timetableElement"));
+    loadButton.disabled = false;
+    alert("Login failed, wrong username or password");
+    return;
+  }
   localStorage.setItem(
     "cached",
     encodeURIComponent(JSON.stringify(timetable_data))

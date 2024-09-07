@@ -25,6 +25,13 @@ def create_skola24_session(username, password):
 def generate_session_id(username, password):
     return username+"|"+password
 
+def new_session(username,password):
+    try:
+        s = Session(username,password)
+        return s
+    except ValueError:
+        return None
+
 def get_session(username, password):
     session_id = generate_session_id(username, password)
     session: Session = sessions.get(session_id)
@@ -32,8 +39,12 @@ def get_session(username, password):
 
     if not session:
         print(f"no {username} session exists, creating one")
-        session = Session(username, password)
-        sessions[session_id] = session
+        session = new_session(username, password)
+        if session == None:
+            sessions.pop(session_id,None)
+            return None
+        else:
+            sessions[session_id] = session
     else:
         session_expires_datetime = datetime.datetime.fromisoformat(session.expires)
 
@@ -44,8 +55,12 @@ def get_session(username, password):
 
         if current_time > session_expires_datetime:
             print(f"session {username} is too old, creating new one")
-            session = Session(username, password)
-            sessions[session_id] = session
+            session = new_session(username, password)
+            if session == None:
+                sessions.pop(session_id,None)
+                return None
+            else:
+                sessions[session_id] = session
         else:
             # calc the remaining time until expiration
             time_remaining = session_expires_datetime - current_time
@@ -102,6 +117,8 @@ def get_lunch():
 def timetable():
     data = request.json
     session = get_session(data["username"],data["password"])
+    if session == None:
+        return {"error":"bad credentials"}
     today = datetime.date.today()
     week = today.isocalendar()[1]
     if today.weekday() in [5, 6]:
