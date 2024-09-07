@@ -167,6 +167,7 @@ function submit() {
 }
 function clearData() {
   localStorage.clear();
+  cached = null;
 
   var te = document.getElementById("timetableElement");
   te.style.height = "0px";
