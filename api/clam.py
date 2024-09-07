@@ -64,6 +64,6 @@ class Skola24Session():
         timetables_data = timetables.json()
         key_data = key.json()
         print("got timetable data")
-        timetable_data = timetable(self.skola_cookies, years_data, timetables_data, key_data, week_number, width, height, day)
+        timetable_data = timetable(self.skola_cookies, years_data, timetables_data, key_data, week_number, width, height, day, year)
         print("got timetable")
         return timetable_data.json()
