@@ -125,7 +125,7 @@ async function getSchema() {
     localStorage.setItem(
       "cached",null
     );
-    b.clearTimetable(document.getElementById("timetableElement"));
+    clearTimetable(document.getElementById("timetableElement"));
     loadButton.disabled = false;
     alert("Login failed, wrong username or password");
     return;
@@ -139,13 +139,13 @@ async function getSchema() {
 }
 
 function loadTimetable(di) {
-  b.clearTimetable(document.getElementById("timetableElement"));
+  clearTimetable(document.getElementById("timetableElement"));
   cached = di;
 
   if (di == null) {
     return;
   }
-  b.renderTimetable(
+  renderTimetable(
     di["data"]["boxList"],
     di["data"]["lineList"],
     di["data"]["textList"],
@@ -172,7 +172,7 @@ function clearData() {
 
   var te = document.getElementById("timetableElement");
   te.style.height = "0px";
-  b.clearTimetable(te);
+  clearTimetable(te);
   document.getElementById("username").value = "";
   document.getElementById("password").value = "";
 }
@@ -196,7 +196,6 @@ function getLunch() {
     });
 }
 
-var b = new PdfRenderer("Arial", false, "gonk");
 var currentSchemaWidth = null;
 
 getLunch();
