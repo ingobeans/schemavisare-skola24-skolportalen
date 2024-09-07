@@ -47,19 +47,14 @@ body {
   display: flex;
   align-items: center;
 }
-.username-field {
+.input-field {
   padding: 8px;
-  border: 1px solid var(--color-tab);
-  border-radius: 4px 0 0 4px;
-  width: 100%;
-  max-width: 160px;
-}
-.password-field {
-  padding: 8px;
-  border: 1px solid var(--color-tab);
+  border: none;
   border-radius: 0;
   width: 100%;
   max-width: 160px;
+  color: var(--color-text);
+  background-color: var(--color-tab);
 }
 .button-container {
   display: flex;
