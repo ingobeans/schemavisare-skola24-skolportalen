@@ -120,11 +120,9 @@ async function getSchema() {
   });
 
   timetable_data = await timetable_request.json();
-  console.log(timetable_data["error"])
-  if (timetable_data["error"] !== null){
-    localStorage.setItem(
-      "cached",null
-    );
+  console.log(timetable_data["error"]);
+  if (timetable_data["error"] !== null) {
+    localStorage.setItem("cached", null);
     clearTimetable(document.getElementById("timetableElement"));
     loadButton.disabled = false;
     alert("Login failed, wrong username or password");
