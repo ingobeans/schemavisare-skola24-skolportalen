@@ -163,7 +163,7 @@ function submit() {
   localStorage.setItem("password", p);
   username = localStorage.getItem("username");
   password = localStorage.getItem("password");
-  getSchema(username);
+  getSchema();
 }
 function clearData() {
   localStorage.clear();
