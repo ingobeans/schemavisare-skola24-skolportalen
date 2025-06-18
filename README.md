@@ -9,3 +9,5 @@ schemavisare för skola24. loggar in via skolportal inloggning. funkar just nu e
 * cache:ar också schemat så man inte behöver reload:a varje gång
 
 ![image](https://github.com/user-attachments/assets/e59d11d9-1d4c-4159-acf1-a06ff2a8caee)
+
+använder [clamportal](https://github.com/ingobeans/clamportal), min reverse engineer:ade api av uppsala skolportalen och skola24
